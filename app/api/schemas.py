@@ -40,23 +40,6 @@ class VendorContractRead(BaseModel):
     status: str
 
 
-class VendorContractLineCreate(BaseModel):
-    vendor_contract_id: UUID
-    vendor_item_number: str
-    vendor_uom: str
-    contract_price: float
-    vendor_description: Optional[str] = None
-
-
-class VendorContractLineRead(BaseModel):
-    id: UUID
-    vendor_contract_id: UUID
-    vendor_item_number: str
-    vendor_uom: str
-    contract_price: float
-    vendor_description: Optional[str] = None
-
-
 class ReconciliationRunCreate(BaseModel):
     vendor_contract_id: UUID
     run_type: str = Field(default="manual")

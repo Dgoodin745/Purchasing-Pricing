@@ -29,21 +29,14 @@ curl -X POST http://localhost:8000/api/v1/vendor-contracts \
   -H "X-Tenant-ID: <tenant_id>" \
   -d '{"vendor_file_id":"<file_id>","contract_number":"C-001","vendor_name":"Acme"}'
 ```
-4. Add a contract line:
-```
-curl -X POST http://localhost:8000/api/v1/vendor-contract-lines \
-  -H 'Content-Type: application/json' \
-  -H "X-Tenant-ID: <tenant_id>" \
-  -d '{"vendor_contract_id":"<contract_id>","vendor_item_number":"ITEM-1","vendor_uom":"EA","contract_price":10.25}'
-```
-5. Trigger reconciliation:
+4. Trigger reconciliation:
 ```
 curl -X POST http://localhost:8000/api/v1/reconciliation-runs \
   -H 'Content-Type: application/json' \
   -H "X-Tenant-ID: <tenant_id>" \
   -d '{"vendor_contract_id":"<contract_id>","run_type":"manual"}'
 ```
-6. Fetch exceptions:
+5. Fetch exceptions:
 ```
 curl -X GET http://localhost:8000/api/v1/exceptions \
   -H "X-Tenant-ID: <tenant_id>"

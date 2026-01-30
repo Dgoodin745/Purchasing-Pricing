@@ -88,29 +88,6 @@ def list_vendor_contracts(
     return db.query(models.VendorContract).filter_by(tenant_id=tenant_id).all()
 
 
-@router.post("/vendor-contract-lines", response_model=schemas.VendorContractLineRead)
-def create_vendor_contract_line(
-    payload: schemas.VendorContractLineCreate,
-    tenant_id: UUID = Depends(get_tenant_id),
-    db: Session = Depends(get_db),
-):
-    contract = db.get(models.VendorContract, payload.vendor_contract_id)
-    if not contract or contract.tenant_id != tenant_id:
-        raise HTTPException(status_code=404, detail="Contract not found")
-    line = models.VendorContractLine(
-        tenant_id=tenant_id,
-        vendor_contract_id=payload.vendor_contract_id,
-        vendor_item_number=payload.vendor_item_number,
-        vendor_uom=payload.vendor_uom,
-        vendor_description=payload.vendor_description,
-        contract_price=payload.contract_price,
-    )
-    db.add(line)
-    db.commit()
-    db.refresh(line)
-    return line
-
-
 @router.post("/reconciliation-runs", response_model=schemas.ReconciliationRunRead)
 def run_reconciliation(
     payload: schemas.ReconciliationRunCreate,
