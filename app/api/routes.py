@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.api import schemas
 from app.api.deps import get_db, get_tenant_id
 from app.db import models
+from app.connectors.p21_odata import P21ODataClient
 from app.jobs.reconciliation import create_reconciliation_run
 from app.storage.files import save_upload
 
@@ -88,6 +89,29 @@ def list_vendor_contracts(
     return db.query(models.VendorContract).filter_by(tenant_id=tenant_id).all()
 
 
+@router.post("/vendor-contract-lines", response_model=schemas.VendorContractLineRead)
+def create_vendor_contract_line(
+    payload: schemas.VendorContractLineCreate,
+    tenant_id: UUID = Depends(get_tenant_id),
+    db: Session = Depends(get_db),
+):
+    contract = db.get(models.VendorContract, payload.vendor_contract_id)
+    if not contract or contract.tenant_id != tenant_id:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    line = models.VendorContractLine(
+        tenant_id=tenant_id,
+        vendor_contract_id=payload.vendor_contract_id,
+        vendor_item_number=payload.vendor_item_number,
+        vendor_uom=payload.vendor_uom,
+        vendor_description=payload.vendor_description,
+        contract_price=payload.contract_price,
+    )
+    db.add(line)
+    db.commit()
+    db.refresh(line)
+    return line
+
+
 @router.post("/reconciliation-runs", response_model=schemas.ReconciliationRunRead)
 def run_reconciliation(
     payload: schemas.ReconciliationRunCreate,
@@ -97,6 +121,12 @@ def run_reconciliation(
     run = create_reconciliation_run(db, tenant_id, payload.vendor_contract_id, payload.run_type)
     db.refresh(run)
     return run
+
+
+@router.post("/connectors/p21/test")
+def test_p21_connector():
+    client = P21ODataClient()
+    return client.test_connection()
 
 
 @router.get("/reconciliation-runs", response_model=list[schemas.ReconciliationRunRead])
