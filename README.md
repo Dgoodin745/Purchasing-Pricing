@@ -37,6 +37,7 @@ curl -X POST http://localhost:8000/api/v1/vendor-contract-lines \
   -d '{"vendor_contract_id":"<contract_id>","vendor_item_number":"ITEM-1","vendor_uom":"EA","contract_price":10.25}'
 ```
 5. Trigger reconciliation:
+4. Trigger reconciliation:
 ```
 curl -X POST http://localhost:8000/api/v1/reconciliation-runs \
   -H 'Content-Type: application/json' \
@@ -44,6 +45,7 @@ curl -X POST http://localhost:8000/api/v1/reconciliation-runs \
   -d '{"vendor_contract_id":"<contract_id>","run_type":"manual"}'
 ```
 6. Fetch exceptions:
+5. Fetch exceptions:
 ```
 curl -X GET http://localhost:8000/api/v1/exceptions \
   -H "X-Tenant-ID: <tenant_id>"
@@ -61,3 +63,4 @@ Set the following environment variables before calling the test endpoint:
 ```
 curl -X POST http://localhost:8000/api/v1/connectors/p21/test
 ```
+- This is an MVP scaffold and does not yet implement Prophet 21 OData, RBAC, or workflow UI.
